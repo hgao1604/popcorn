@@ -34,7 +34,7 @@ export function useMovies(query, callback) {
     }
     //closeSelectMovie();
     fetchMovies();
-  }, [query]);
+  }, [query, callback]);
 
   return { error, isLoading, movies };
 }
