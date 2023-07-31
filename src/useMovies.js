@@ -34,7 +34,8 @@ export function useMovies(query, callback) {
     }
     //closeSelectMovie();
     fetchMovies();
-  }, [query, callback]);
+    // eslint-disable-next-line
+  }, [query]);
 
   return { error, isLoading, movies };
 }
