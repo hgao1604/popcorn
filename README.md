@@ -1,70 +1,95 @@
-# Getting Started with Create React App
+# usePopcorn
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## HOW TO SPLIT A UI INTO COMPONENTS
 
-## Available Scripts
+![how to split UI into components](./src/images-readme/componentSize.png)
 
-In the project directory, you can run:
+![main criteria](./src/images-readme/criteria.png)
 
-### `npm start`
+![guidelines](./src/images-readme/guidelines.png)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+![three categories of components](./src/images-readme/categories.png)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## WHAT IS COMPONENT COMPOSITION?
 
-### `npm test`
+![Component composition](./src/images-readme/composition.png)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## HOW REACT WORKS BEHIND THE SCENES
 
-### `npm run build`
+### COMPONENT VS. INSTANCE VS. ELEMENT
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+![component](./src/images-readme/component.png)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+![Alt text](./src/images-readme/instance.png)
+![Alt text](./src/images-readme/element.png)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+#### React.createElement
 
-### `npm run eject`
+`React.createElement()` is a basic function for creating React elements — the things you see in JSX. Behind the scenes, the code you write in JSX is actually being transformed into calls to `React.createElement()`.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+This function accepts three parameters:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. `type`: A string (corresponding to the name of a native DOM tag) or a function (corresponding to a React component).
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+2. `props`: An object containing the props to pass to the component, or attributes for the DOM element.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+3. `children`: The children of the component. This could be any valid React child, such as a string, a React element, or an array of these types.
 
-## Learn More
+For example, if you write this in JSX:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```jsx
+<div className="myClass">Hello World!</div>
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Behind the scenes, this JSX is being transformed into:
 
-### Code Splitting
+```javascript
+React.createElement("div", { className: "myClass" }, "Hello World!");
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+These two pieces of code do the same thing: they both create a div element with the class "myClass" and the text "Hello World!".
 
-### Analyzing the Bundle Size
+While you can use `React.createElement()` directly, most of the time we use JSX because its syntax is more similar to HTML and it's more readable and writeable.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+![Alt text](./src/images-readme/dom.png)
 
-### Making a Progressive Web App
+### HOW RENDERING WORKS
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+![overview ](./src/images-readme/overview.png)
 
-### Advanced Configuration
+![overview2](./src/images-readme/overview2.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+#### Rendering trigger
 
-### Deployment
+![Rendering is triggered](./src/images-readme/trigger.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+![The virtual DOM](./src/images-readme/virtualDom.png)
 
-### `npm run build` fails to minify
+1. Component tree = Component instance Tree
+2. React element tree = Virtual DOM(cheap and fast which are just js objects)
+3. Trigger rendering leads to the update of component (instance) tree,and then results in the update of corresponding virtual dom and its children.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+![rendering phase1](./src/images-readme/rendering1.png)
+
+#### WHAT IS RECONCILIATION AND WHY DO WE NEED IT?
+
+![Reconciliation](./src/images-readme/reconciliation.png)
+
+![FIBER](./src/images-readme/fiber.png)
+The Fiber tree in React is essentially a representation of the component hierarchy. Each node in the tree corresponds to a React element - it could be a DOM element (like a div or span) or a user-defined component. This is called a "fiber node" or just a "fiber".
+
+When React renders an application, it constructs this Fiber tree as a step in the rendering/reconciliation process. This tree is used to keep track of the work that needs to be done to update the DOM.
+
+Here are the key points to understand about the Fiber tree:
+
+1. **Fiber Node**: Each Fiber node contains information about a React element, including its type (e.g. div, span, etc.), its props, and the state it returns.
+
+2. **Tree Structure**: The Fiber tree mirrors the structure of the DOM tree but also includes class and function components. Each Fiber node has a link to its first child, its next sibling, and its parent. This helps React traverse the nodes in the tree.
+
+3. **Double Buffering**: React maintains two trees - the current tree and the work-in-progress tree. The current tree represents the state of the UI, and the work-in-progress tree is where React performs the updates. When the updates are ready, React switches the two trees.
+
+4. **Unit of Work**: Each Fiber in the tree represents a unit of work. React traverses the Fiber tree and performs the work associated with each Fiber. This could be rendering a new element, updating an existing one, or deleting an element.
+
+5. **Priority**: Each unit of work (Fiber) has a priority level. This is used by React to determine which work needs to be done first.
+
+6. **Incremental Updates**: Fiber allows React to split up the rendering process into small chunks and spread out the work over multiple frames. This prevents long-running tasks from blocking the main thread and keeps the application responsive.
